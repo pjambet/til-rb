@@ -1,4 +1,4 @@
-# til-cli
+# til-rb
 
 A work-in-progress tool to maintain a TIL repo.
 
