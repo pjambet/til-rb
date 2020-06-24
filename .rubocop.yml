@@ -3,6 +3,12 @@
 Layout/LineLength:
   Max: 120
 
+Layout/EmptyLinesAroundModuleBody:
+  EnforcedStyle: empty_lines_except_namespace
+
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines_except_namespace
+
 Layout/EmptyLinesAroundAttributeAccessor:
   Enabled: true
 
@@ -68,3 +74,9 @@ Style/PercentLiteralDelimiters:
     '%r': '{}'
     '%w': '()'
     '%W': '()'
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
