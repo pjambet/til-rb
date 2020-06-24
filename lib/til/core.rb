@@ -1,5 +1,6 @@
 require 'octokit'
 require 'tempfile'
+require 'readline'
 
 module Til
   class Core
@@ -37,6 +38,9 @@ module Til
         check_environment_variables
         existing_categories = fetch_existing_categories
         selected_category = prompt_fzf(existing_categories)
+        if @new_category
+          selected_category = prompt_for_new_category
+        end
         prepopulate_tempfile(selected_category)
         open_editor
         til_content = read_file
@@ -99,6 +103,10 @@ module Til
       throw :exit
     end
 
+    def prompt_for_new_category
+      Readline.readline("New category > ").downcase
+    end
+
     def prepopulate_tempfile(selected_category, title = 'Title Placeholder')
       @tempfile = Tempfile.new('til.md')
       @tempfile.write("# #{title}")
@@ -155,28 +163,12 @@ module Til
     end
 
     def update_readme_content(category, commit_title, filename, readme_content)
-      beginning = readme_content.index('### Categories') + '### Categories'.length
-      eend = readme_content.index('---', readme_content.index('---') + 1) - 1
-
-      # [["[Git](#git)", "Git", "git"], ["[Qux](#qux)", "Qux", "qux"]]
-      categories = readme_content[beginning..eend].scan(/(\[(\w+)\]\(#(\w+)\))/)
+      updater = Til::ReadmeUpdater.new(readme_content)
 
       if @new_category
+        updater.add_item_for_new_category(category, commit_title, filename)
       else
-        existing_cat = categories.find { |c| c[2] == category }
-
-        loc_in_page = readme_content.index("### #{existing_cat[1]}")
-        next_cat_location = readme_content.index('###', loc_in_page + 1)
-
-        new_line = "- [#{commit_title}](#{category}/#{filename})"
-        new_readme_content = ''
-        if next_cat_location
-          breakpoint = next_cat_location - 2
-          new_readme_content = readme_content[0..breakpoint] + new_line + readme_content[breakpoint..]
-        else
-          new_readme_content = readme_content + new_line + '\n'
-        end
-        new_readme_content
+        updater.add_item_for_existing_category(category, commit_title, filename)
       end
     end
 

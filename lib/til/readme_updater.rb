@@ -41,6 +41,11 @@ module Til
         category_triplet[2] >= category
       end
 
+      if insert_at.nil?
+        # It's the last category
+        insert_at = categories.length
+      end
+
       categories.insert(insert_at, ["[#{category.capitalize}](\##{category})", category.capitalize, category])
 
       new_categories_formatted = categories.map do |category|
@@ -60,11 +65,20 @@ module Til
       next_bound = @initial_content.index('###', current_search_index + 1)
 
       new_line = "- [#{item_title}](#{category}/#{filename})"
-      new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
-                           + "\n\n#{new_categories_formatted}\n" \
-                           + @initial_content[eend..(next_bound -2)] \
-                           + "\n### #{category.capitalize}\n\n#{new_line}\n\n" \
-                           + @initial_content[next_bound..]
+
+      if next_bound
+        new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
+                             + "\n\n#{new_categories_formatted}\n" \
+                             + @initial_content[eend..(next_bound - 2)] \
+                             + "\n### #{category.capitalize}\n\n#{new_line}\n\n" \
+                             + @initial_content[next_bound..]
+      else
+        new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
+                             + "\n\n#{new_categories_formatted}\n" \
+                             + @initial_content[eend..] \
+                             + "\n### #{category.capitalize}\n\n#{new_line}\n"
+      end
+
       new_readme_content
     end
   end

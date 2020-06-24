@@ -135,7 +135,76 @@ describe Til::ReadmeUpdater do
       assert_equal(expected_string, updater.add_item_for_new_category('haskell', 'e', '2020-06-24_e.md'))
     end
 
-    it 'works with a category that ends up first'
-    it 'works with a category that ends up last'
+    it 'works with a category that ends up first' do
+      updater = Til::ReadmeUpdater.new(@initial_content)
+      expected_string = <<~CONTENT
+      # TIL
+
+      ---
+
+      ### Categories
+
+      * [Bash](#bash)
+      * [Git](#git)
+      * [Git2](#git2)
+      * [Javascript](#javascript)
+
+      ---
+
+      ### Bash
+
+      - [e](bash/2020-06-24_e.md)
+
+      ### Git
+
+      - [a](git/2020-06-16_a.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
+
+      ### Javascript
+
+      - [c](javascript/2020-06-21_c.md)
+      CONTENT
+
+      assert_equal(expected_string, updater.add_item_for_new_category('bash', 'e', '2020-06-24_e.md'))
+    end
+
+    it 'works with a category that ends up last' do
+      updater = Til::ReadmeUpdater.new(@initial_content)
+      expected_string = <<~CONTENT
+      # TIL
+
+      ---
+
+      ### Categories
+
+      * [Git](#git)
+      * [Git2](#git2)
+      * [Javascript](#javascript)
+      * [Zsh](#zsh)
+
+      ---
+
+      ### Git
+
+      - [a](git/2020-06-16_a.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
+
+      ### Javascript
+
+      - [c](javascript/2020-06-21_c.md)
+
+      ### Zsh
+
+      - [e](zsh/2020-06-24_e.md)
+      CONTENT
+
+      assert_equal(expected_string, updater.add_item_for_new_category('zsh', 'e', '2020-06-24_e.md'))
+    end
   end
 end
