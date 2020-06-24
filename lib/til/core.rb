@@ -1,3 +1,5 @@
+require 'octokit'
+
 module Til
   class Core
 
@@ -18,12 +20,16 @@ module Til
       til.run
     end
 
-    def initialize(kernel = Kernel)
+    def initialize(kernel: Kernel, env: ENV)
       @kernel = kernel
+      @env = env
+      @client = nil
     end
 
     def run
       check_dependencies
+      check_environment_variables
+      existing_categories = fetch_existing_categories
     end
 
     private
@@ -33,6 +39,19 @@ module Til
       unless result
         raise "fzf is required, you can install it on macOS with 'brew install fzf'"
       end
+    end
+
+    def check_environment_variables
+      if @env['GH_TOKEN'].nil? || @env['GH_TOKEN'] == ''
+        raise 'The GH_TOKEN (with the public_repo or repo scope) environment variable is required'
+      end
+    end
+
+    def fetch_existing_categories
+    end
+
+    def github_client
+      @client ||= Octokit::Client.new(access_token: env['GH_TOKEN'])
     end
 
   end

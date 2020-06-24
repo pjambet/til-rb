@@ -10,4 +10,5 @@ Gem::Specification.new do |s|
   s.files       = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md)
   s.homepage    = 'https://rubygems.org/gems/til-rb'
   s.license     = 'MIT'
+  s.add_runtime_dependency 'octokit', '~> 4.0'
 end
