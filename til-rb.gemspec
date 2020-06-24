@@ -1,6 +1,8 @@
+require_relative 'lib/til/version'
+
 Gem::Specification.new do |s|
   s.name        = 'til-rb'
-  s.version     = '0.0.1'
+  s.version     = Til::VERSION
   s.executables << 'til'
   s.date        = '2020-06-24'
   s.summary     = 'A utility to manage a repo of TILs'
