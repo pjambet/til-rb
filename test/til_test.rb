@@ -1,6 +1,6 @@
 require 'test_helper'
 
-describe Til do
+describe Til::Core do
   it 'has a run method' do
     github_client_mock = Minitest::Mock.new
     github_client_mock.expect :contents, [], ['pjambet/til', { path: '' }]
