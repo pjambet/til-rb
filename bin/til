@@ -7,7 +7,7 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = 'Usage: til [options]'
 
-  opts.on('-tTITLE', '--titleTITLE', 'Set the title from the command line') do |title|
+  opts.on('-t', '--title=TITLE', 'Set the title from the command line') do |title|
     options[:title] = title
   end
 
