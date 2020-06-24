@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.description = 'til-rb helps you manage a repo of TILs similar to https://github.com/jbranchaud/til'
   s.authors     = ['Pierre Jambet']
   s.email       = 'hello@pjam.me'
-  s.files       = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md)
+  s.files       = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md) - %w(til.gif)
   s.homepage    = 'https://rubygems.org/gems/til-rb'
   s.license     = 'MIT'
   s.add_runtime_dependency 'octokit', '~> 4.0'
