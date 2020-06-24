@@ -12,6 +12,7 @@ describe Til::ReadmeUpdater do
     ### Categories
 
     * [Git](#git)
+    * [Git2](#git2)
     * [Javascript](#javascript)
 
     ---
@@ -19,6 +20,10 @@ describe Til::ReadmeUpdater do
     ### Git
 
     - [a](git/2020-06-16_a.md)
+
+    ### Git2
+
+    - [a](git2/2020-06-16_a.md)
 
     ### Javascript
 
@@ -37,6 +42,7 @@ describe Til::ReadmeUpdater do
       ### Categories
 
       * [Git](#git)
+      * [Git2](#git2)
       * [Javascript](#javascript)
 
       ---
@@ -45,6 +51,10 @@ describe Til::ReadmeUpdater do
 
       - [a](git/2020-06-16_a.md)
       - [e](git/2020-06-24_e.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
 
       ### Javascript
 
@@ -64,6 +74,7 @@ describe Til::ReadmeUpdater do
       ### Categories
 
       * [Git](#git)
+      * [Git2](#git2)
       * [Javascript](#javascript)
 
       ---
@@ -71,6 +82,10 @@ describe Til::ReadmeUpdater do
       ### Git
 
       - [a](git/2020-06-16_a.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
 
       ### Javascript
 
@@ -84,7 +99,43 @@ describe Til::ReadmeUpdater do
   end
 
   describe 'add_item_for_new_category' do
-    it 'works with a category that does not end up last'
+    it 'works with a category that does not end up last or first' do
+      updater = Til::ReadmeUpdater.new(@initial_content)
+      expected_string = <<~CONTENT
+      # TIL
+
+      ---
+
+      ### Categories
+
+      * [Git](#git)
+      * [Git2](#git2)
+      * [Haskell](#haskell)
+      * [Javascript](#javascript)
+
+      ---
+
+      ### Git
+
+      - [a](git/2020-06-16_a.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
+
+      ### Haskell
+
+      - [e](haskell/2020-06-24_e.md)
+
+      ### Javascript
+
+      - [c](javascript/2020-06-21_c.md)
+      CONTENT
+
+      assert_equal(expected_string, updater.add_item_for_new_category('haskell', 'e', '2020-06-24_e.md'))
+    end
+
+    it 'works with a category that ends up first'
     it 'works with a category that ends up last'
   end
 end
