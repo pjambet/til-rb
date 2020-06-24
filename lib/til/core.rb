@@ -28,7 +28,7 @@ module Til
       @env = env
       @stderr = stderr
       @github_client = github_client
-      @repo_name = 'pjambet/til'
+      @repo_name = nil
       @new_category = false
     end
 
@@ -62,13 +62,13 @@ module Til
         raise 'The GH_TOKEN (with the public_repo or repo scope) environment variable is required'
       end
 
-      if (@env['VISUAL'].nil? || @env['VISUAL'] == '') && (@env['EDITOR'].nil? || @env['EDITOR'] == '')
-        raise 'The VISUAL or EDITOR environment variables are required'
+      if @env['GH_REPO'].nil? || @env['GH_REPO'] == ''
+        raise 'The GH_REPO environment variable is required'
       end
     end
 
     def fetch_existing_categories
-      existing_categories = github_client.contents(@repo_name, path: '').filter do |c|
+      existing_categories = github_client.contents(repo_name, path: '').filter do |c|
         c['type'] == 'dir'
       end
 
@@ -81,6 +81,10 @@ module Til
 
     def github_client
       @github_client ||= Octokit::Client.new(access_token: @env['GH_TOKEN'])
+    end
+
+    def repo_name
+      @repo_name ||= @env['GH_REPO']
     end
 
     def prompt_fzf(categories)
@@ -116,7 +120,7 @@ module Til
     end
 
     def open_editor
-      editor = ENV['VISUAL'] || ENV['EDITOR']
+      editor = ENV['VISUAL'] || ENV['EDITOR'] || 'vi'
       system(*editor.split, @tempfile.path)
     end
 
@@ -135,13 +139,13 @@ module Til
       name = commit_title.split.map(&:downcase).join('-')
       filename = "#{today}_#{name}.md"
 
-      ref = github_client.ref @repo_name, 'heads/master'
-      commit = github_client.commit @repo_name, ref.object.sha
-      tree = github_client.tree @repo_name, commit.commit.tree.sha, recursive: true
-      readme = github_client.readme @repo_name
+      ref = github_client.ref repo_name, 'heads/master'
+      commit = github_client.commit repo_name, ref.object.sha
+      tree = github_client.tree repo_name, commit.commit.tree.sha, recursive: true
+      readme = github_client.readme repo_name
       readme_content = Base64.decode64 readme.content
 
-      blob = github_client.create_blob @repo_name, content
+      blob = github_client.create_blob repo_name, content
       blobs = tree.tree.filter { |object|
         object[:type] == 'blob' && object[:path] != 'README.md'
       }.map { |object|
@@ -149,14 +153,14 @@ module Til
       }
 
       updated_readme_content = update_readme_content(category, commit_title, filename, readme_content)
-      new_readme_blob = github_client.create_blob @repo_name, updated_readme_content
+      new_readme_blob = github_client.create_blob repo_name, updated_readme_content
       blobs << { path: 'README.md', mode: '100644', type: 'blob', sha: new_readme_blob }
 
       blobs << { path: "#{category}/#{filename}", mode: '100644', type: 'blob', sha: blob }
 
-      tree = github_client.create_tree @repo_name, blobs
-      commit = github_client.create_commit @repo_name, commit_title, tree.sha, ref.object.sha
-      github_client.update_ref @repo_name, 'heads/master', commit.sha
+      tree = github_client.create_tree repo_name, blobs
+      commit = github_client.create_commit repo_name, commit_title, tree.sha, ref.object.sha
+      github_client.update_ref repo_name, 'heads/master', commit.sha
 
       puts "You can see your new TIL at : https://github.com/pjambet/til/blob/master/#{category}/#{filename}"
       puts "You can edit your new TIL at : https://github.com/pjambet/til/edit/master/#{category}/#{filename}"

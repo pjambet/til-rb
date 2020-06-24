@@ -10,7 +10,7 @@ describe Til::Core do
     Til::Core.new(
       process: Process,
       stderr: StringIO.new,
-      env: { 'GH_TOKEN' => 'abc', 'VISUAL' => 'vim' },
+      env: { 'GH_TOKEN' => 'abc', 'GH_REPO' => 'pjambet/til' },
       github_client: github_client_mock,
     ).run
   end
@@ -22,16 +22,11 @@ describe Til::Core do
     assert_match 'The GH_TOKEN (with the public_repo or repo scope) environment variable is required', error.message
   end
 
-  it 'exits if both VISUAL and EDITOR are nil or empty' do
+  it 'exits if GH_REPO is nil or empty' do
     error = assert_raises RuntimeError do
       Til::Core.new(env: { 'GH_TOKEN' => 'abc' }).run
     end
-    assert_match 'The VISUAL or EDITOR environment variables are required', error.message
-
-    error = assert_raises RuntimeError do
-      Til::Core.new(env: { 'GH_TOKEN' => 'abc', 'VISUAL' => '' }).run
-    end
-    assert_match 'The VISUAL or EDITOR environment variables are required', error.message
+    assert_match 'The GH_REPO environment variable is required', error.message
   end
 
   it 'exits if fzf is not available' do
