@@ -27,6 +27,12 @@ Lint/RaiseException:
 Lint/StructNewOverride:
   Enabled: true
 
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/MethodLength:
+  Max: 50
+
 Naming/FileName:
   Exclude: ['lib/til-rb.rb']
 
@@ -64,6 +70,9 @@ Style/TrailingCommaInHashLiteral:
   EnforcedStyleForMultiline: consistent_comma
 
 Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: consistent_comma
 
 Style/PercentLiteralDelimiters:
