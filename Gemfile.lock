@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    til-rb (0.0.3)
+    til-rb (0.0.4)
       octokit (~> 4.0)
 
 GEM
