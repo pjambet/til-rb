@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require 'til-rb'
+require 'test_helper'
 
 describe Til do
   it 'has a run method' do
