@@ -1,5 +1,20 @@
 #!/usr/bin/env ruby
 
 require 'til-rb'
+require 'optparse'
 
-Til::Core.run
+options = {}
+OptionParser.new do |opts|
+  opts.banner = 'Usage: til [options]'
+
+  opts.on('-tTITLE', '--titleTITLE', 'Set the title from the command line') do |title|
+    options[:title] = title
+  end
+
+  opts.on('-h', '--help', 'Prints this help') do
+    puts opts
+    exit
+  end
+end.parse!
+
+Til::Core.run options: options

@@ -5,7 +5,7 @@ require 'readline'
 module Til
   class Core
 
-    def self.run
+    def self.run(options: {})
       # Exit if `fzf` is not available
       # Optionally print a spinner
       # Grab the list of existing categories
@@ -18,11 +18,12 @@ module Til
       # Create the new file
       # Create a new commit
       # Output a link to the file and the link to edit it
-      til = new
+      til = new(options: options)
       til.run
     end
 
-    def initialize(kernel: Kernel, process: Process, env: ENV, github_client: nil, stderr: $stderr)
+    def initialize(options: {}, kernel: Kernel, process: Process, env: ENV, github_client: nil, stderr: $stderr)
+      @options = options
       @kernel = kernel
       @process = process
       @env = env
@@ -41,7 +42,7 @@ module Til
         if @new_category
           selected_category = prompt_for_new_category
         end
-        prepopulate_tempfile(selected_category)
+        prepopulate_tempfile(selected_category, @options[:title])
         open_editor
         til_content = read_file
         commit_new_til(selected_category, til_content)
