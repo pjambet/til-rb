@@ -25,8 +25,8 @@ brew install fzf
 ```
 
 _fzf is technically not a hard requirement, we really could have a slightly different workflow if it's not available.
-Given that I currently the only user, there's no need to change this at the moment, but if you'd like to use this gem
-without `fzf`, let me know and I'll happily work on it!_
+Given that I currently am the only user, there's no need to change this at the moment, but if you'd like to use this
+gem without `fzf`, let me know and I'll happily work on it!_
 
 ### Step 2: Create a GitHub repo
 
