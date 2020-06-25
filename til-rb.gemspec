@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Pierre Jambet']
   s.email       = 'hello@pjam.me'
   s.files       = Dir.glob('{bin,lib}/**/*') + %w(LICENSE README.md) - %w(til.gif)
-  s.homepage    = 'https://rubygems.org/gems/til-rb'
+  s.homepage    = 'https://github.com/pjambet/til-rb/'
   s.license     = 'MIT'
   s.add_runtime_dependency 'octokit', '~> 4.0'
   s.add_development_dependency 'mocha', '~> 1.11.2'
