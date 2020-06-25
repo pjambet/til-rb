@@ -18,6 +18,16 @@ See it in action below:
 gem install til-rb
 ```
 
+You will also need `fzf` to run `til`, it's available on homebrew, so unless you already installed it, you'll have to run
+
+```
+brew install fzf
+```
+
+_fzf is technically not a hard requirement, we really could have a slightly different workflow if it's not available.
+Given that I currently the only user, there's no need to change this at the moment, but if you'd like to use this gem
+without `fzf`, let me know and I'll happily work on it!_
+
 ### Step 2: Create a GitHub repo
 
 You need a GitHub repo to store your TILs. The gem has pretty strict expectations about the format of the README.md
