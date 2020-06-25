@@ -51,3 +51,10 @@ Run `til` from the command line
 
 - An `init` command that will create a repo for you
 - A `configure` command that will store the token and the repo name in a file in `~/.config/til/config` or `~/.til`
+
+## Known issues
+
+The current version (0.0.5) deletes the temporary file before attempting to create the new commit, so if anything goes
+wrong there, the content of the file will be lost.
+This will be fixed soon, by only deleting the temporary file after the commit was created, but please keep that in mind
+if you typed a long TIL and definitely don't want to lose its content.
