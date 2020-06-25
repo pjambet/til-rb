@@ -163,8 +163,8 @@ module Til
       commit = github_client.create_commit repo_name, commit_title, tree.sha, ref.object.sha
       github_client.update_ref repo_name, 'heads/master', commit.sha
 
-      puts "You can see your new TIL at : https://github.com/pjambet/til/blob/master/#{category}/#{filename}"
-      puts "You can edit your new TIL at : https://github.com/pjambet/til/edit/master/#{category}/#{filename}"
+      puts "You can see your new TIL at : https://github.com/#{repo_name}/blob/master/#{category}/#{filename}"
+      puts "You can edit your new TIL at : https://github.com/#{repo_name}/edit/master/#{category}/#{filename}"
     end
 
     def update_readme_content(category, commit_title, filename, readme_content)
