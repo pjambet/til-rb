@@ -133,7 +133,7 @@ module Til
 
     def new_filename(commit_title)
       today = Time.now.strftime '%Y-%m-%d'
-      name = (commit_title.split.map(&:downcase).join('-'))
+      name = CGI.escape(commit_title.split.map(&:downcase).join('-'))
       "#{today}_#{name}.md"
     end
 
