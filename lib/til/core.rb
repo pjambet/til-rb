@@ -5,6 +5,9 @@ require 'readline'
 module Til
   class Core
 
+    GH_TOKEN_ENV_VAR_NAME = 'TIL_RB_GITHUB_TOKEN'
+    GH_REPO_ENV_VAR_NAME = 'TIL_RB_GITHUB_REPO'
+
     def self.run(options: {})
       # Exit if `fzf` is not available
       # Optionally print a spinner
@@ -59,12 +62,20 @@ module Til
     end
 
     def check_environment_variables
-      if @env['GH_TOKEN'].nil? || @env['GH_TOKEN'] == ''
-        raise 'The GH_TOKEN (with the public_repo or repo scope) environment variable is required'
+      if @env[GH_TOKEN_ENV_VAR_NAME].nil? || @env[GH_TOKEN_ENV_VAR_NAME] == ''
+        if @env['GH_TOKEN'].nil? || @env['GH_TOKEN'] == ''
+          raise "The #{GH_TOKEN_ENV_VAR_NAME} (with the public_repo or repo scope) environment variable is required"
+        else
+          @stderr.puts "Using GH_TOKEN is deprecated, use #{GH_TOKEN_ENV_VAR_NAME} instead"
+        end
       end
 
-      if @env['GH_REPO'].nil? || @env['GH_REPO'] == ''
-        raise 'The GH_REPO environment variable is required'
+      if @env[GH_REPO_ENV_VAR_NAME].nil? || @env[GH_REPO_ENV_VAR_NAME] == ''
+        if @env['GH_REPO'].nil? || @env['GH_REPO'] == ''
+          raise "The #{GH_REPO_ENV_VAR_NAME} environment variable is required"
+        else
+          @stderr.puts "Using GH_REPO is deprecated, use #{GH_REPO_ENV_VAR_NAME} instead"
+        end
       end
     end
 
@@ -81,11 +92,11 @@ module Til
     end
 
     def github_client
-      @github_client ||= Octokit::Client.new(access_token: @env['GH_TOKEN'])
+      @github_client ||= Octokit::Client.new(access_token: @env[GH_TOKEN_ENV_VAR_NAME] || @env['GH_TOKEN'])
     end
 
     def repo_name
-      @repo_name ||= @env['GH_REPO']
+      @repo_name ||= (@env[GH_REPO_ENV_VAR_NAME] || @env['GH_REPO'])
     end
 
     def prompt_fzf(categories)
