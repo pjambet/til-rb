@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'timecop'
 
 describe Til::Core do
   it 'has a run method' do
@@ -36,5 +37,18 @@ describe Til::Core do
       Til::Core.new(kernel: kernel_mock, env: { 'GH_TOKEN' => 'abc' }).run
     end
     assert_match "fzf is required, you can install it on macOS with 'brew install fzf'", error.message
+  end
+
+  it 'escapes URLs in filenames' do
+    # Yeah yeah, I'm testing a private methode, it's 'wrong', but *shrug*
+    til = Til::Core.new(
+      env: { 'GH_TOKEN' => 'abc', 'GH_REPO' => 'pjambet/til' },
+    )
+
+    Timecop.freeze(Time.local(2020, 6, 25, 12, 0, 0)) do
+      filename = til.send :new_filename, 'Ruby 2.7 adds Enumerable#filter_map'
+
+      assert_equal '2020-06-25_ruby-2.7-adds-enumerable%23filter_map.md', filename
+    end
   end
 end

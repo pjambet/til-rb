@@ -131,14 +131,18 @@ module Til
       content
     end
 
+    def new_filename(commit_title)
+      today = Time.now.strftime '%Y-%m-%d'
+      name = (commit_title.split.map(&:downcase).join('-'))
+      "#{today}_#{name}.md"
+    end
+
     def commit_new_til(category, content)
       commit_title = content.lines[0].chomp
       if commit_title.start_with?('#')
         commit_title = commit_title[1..].strip
       end
-      today = Time.now.strftime '%Y-%m-%d'
-      name = commit_title.split.map(&:downcase).join('-')
-      filename = "#{today}_#{name}.md"
+      filename = new_filename(commit_title)
 
       ref = github_client.ref repo_name, 'heads/master'
       commit = github_client.commit repo_name, ref.object.sha
