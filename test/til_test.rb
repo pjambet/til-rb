@@ -74,7 +74,7 @@ describe Til::Core do
     assert_match "fzf is required, you can install it on macOS with 'brew install fzf'", error.message
   end
 
-  it 'escapes URLs in filenames' do
+  it 'does not escape URLs in filenames' do
     # Yeah yeah, I'm testing a private methode, it's 'wrong', but *shrug*
     til = Til::Core.new(
       env: { 'TIL_RB_GITHUB_TOKEN' => 'abc', 'TIL_RB_GITHUB_REPO' => 'pjambet/til' },
@@ -83,7 +83,7 @@ describe Til::Core do
     Timecop.freeze(Time.local(2020, 6, 25, 12, 0, 0)) do
       filename = til.send :new_filename, 'Ruby 2.7 adds Enumerable#filter_map'
 
-      assert_equal '2020-06-25_ruby-2.7-adds-enumerable%23filter_map.md', filename
+      assert_equal '2020-06-25_ruby-2.7-adds-enumerable#filter_map.md', filename
     end
   end
 end
