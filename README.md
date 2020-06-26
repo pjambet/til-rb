@@ -53,6 +53,9 @@ Add the following variables to your environment:
 You might want to add those to either your `.bashrc` or `.zshrc` but please be careful in case you share those publicly
 as the token is private and *must not* be shared publicly.
 
+Note: An earlier version of this gem used different names, `GH_TOKEN` & `GH_REPO`, it still works, but is not the
+recommended approach anymore, see #2.
+
 ### Step 4:
 
 Run `til` from the command line
