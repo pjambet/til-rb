@@ -45,10 +45,10 @@ Note: The format expectations mentioned above are the following:
 
 Add the following variables to your environment:
 
-- `GH_TOKEN`: The only required scope is `public_repo` if your TIL repo is public and `repo` if it is private. You can
+- `TIL_RB_GITHUB_TOKEN`: The only required scope is `public_repo` if your TIL repo is public and `repo` if it is private. You can
   create a token [in the GitHub
   settings](https://github.com/settings/tokens/new?scopes=public_repo&description=Token%20for%20til-rb)
-- `GH_REPO`: The repo name, e.g. `pjambet/til`
+- `TIL_RB_GITHUB_REPO`: The repo name, e.g. `pjambet/til`
 
 You might want to add those to either your `.bashrc` or `.zshrc` but please be careful in case you share those publicly
 as the token is private and *must not* be shared publicly.
