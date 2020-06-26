@@ -64,6 +64,39 @@ describe Til::ReadmeUpdater do
       assert_equal(expected_string, updater.add_item_for_existing_category('git', 'e', '2020-06-24_e.md'))
     end
 
+    it 'works with a category that is not last and a title with url encoded characters' do
+      updater = Til::ReadmeUpdater.new(@initial_content)
+      expected_string = <<~CONTENT
+      # TIL
+
+      ---
+
+      ### Categories
+
+      * [Git](#git)
+      * [Git2](#git2)
+      * [Javascript](#javascript)
+
+      ---
+
+      ### Git
+
+      - [a](git/2020-06-16_a.md)
+      - [Ruby 2.7 adds Enumerable#filter_map](git/2020-06-25_ruby-2.7-adds-enumerable%23filter_map.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
+
+      ### Javascript
+
+      - [c](javascript/2020-06-21_c.md)
+      CONTENT
+
+      assert_equal(expected_string, updater.add_item_for_existing_category('git', 'Ruby 2.7 adds Enumerable#filter_map', '2020-06-25_ruby-2.7-adds-enumerable#filter_map.md'))
+    end
+
+
     it 'works with the last category' do
       updater = Til::ReadmeUpdater.new(@initial_content)
       expected_string = <<~CONTENT
@@ -134,6 +167,43 @@ describe Til::ReadmeUpdater do
 
       assert_equal(expected_string, updater.add_item_for_new_category('haskell', 'e', '2020-06-24_e.md'))
     end
+
+    it 'works with a category that is not last and a title with url encoded characters' do
+      updater = Til::ReadmeUpdater.new(@initial_content)
+      expected_string = <<~CONTENT
+      # TIL
+
+      ---
+
+      ### Categories
+
+      * [Git](#git)
+      * [Git2](#git2)
+      * [Haskell](#haskell)
+      * [Javascript](#javascript)
+
+      ---
+
+      ### Git
+
+      - [a](git/2020-06-16_a.md)
+
+      ### Git2
+
+      - [a](git2/2020-06-16_a.md)
+
+      ### Haskell
+
+      - [Ruby 2.7 adds Enumerable#filter_map](haskell/2020-06-25_ruby-2.7-adds-enumerable%23filter_map.md)
+
+      ### Javascript
+
+      - [c](javascript/2020-06-21_c.md)
+      CONTENT
+
+      assert_equal(expected_string, updater.add_item_for_new_category('haskell', 'Ruby 2.7 adds Enumerable#filter_map', '2020-06-25_ruby-2.7-adds-enumerable#filter_map.md'))
+    end
+
 
     it 'works with a category that ends up first' do
       updater = Til::ReadmeUpdater.new(@initial_content)

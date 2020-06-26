@@ -144,7 +144,7 @@ module Til
 
     def new_filename(commit_title)
       today = Time.now.strftime '%Y-%m-%d'
-      name = CGI.escape(commit_title.split.map(&:downcase).join('-'))
+      name = commit_title.split.map(&:downcase).join('-')
       "#{today}_#{name}.md"
     end
 
@@ -178,8 +178,11 @@ module Til
       commit = github_client.create_commit repo_name, commit_title, tree.sha, ref.object.sha
       github_client.update_ref repo_name, 'heads/master', commit.sha
 
-      puts "You can see your new TIL at : https://github.com/#{repo_name}/blob/master/#{category}/#{filename}"
-      puts "You can edit your new TIL at : https://github.com/#{repo_name}/edit/master/#{category}/#{filename}"
+      cgi_escaped_filename = CGI.escape(filename)
+      til_url = "https://github.com/#{repo_name}/blob/master/#{category}/#{cgi_escaped_filename}"
+      til_edit_url = "https://github.com/#{repo_name}/edit/master/#{category}/#{cgi_escaped_filename}"
+      puts "You can see your new TIL at : #{til_url}"
+      puts "You can edit your new TIL at : #{til_edit_url}"
     end
 
     def update_readme_content(category, commit_title, filename, readme_content)

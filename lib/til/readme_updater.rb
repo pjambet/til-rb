@@ -17,7 +17,7 @@ module Til
       loc_in_page = @initial_content.index("### #{existing_cat[1]}")
       next_cat_location = @initial_content.index('###', loc_in_page + 1)
 
-      new_line = "- [#{item_title}](#{category}/#{filename})"
+      new_line = "- [#{item_title}](#{category}/#{CGI.escape(filename)})"
       new_readme_content = ''
       if next_cat_location
         breakpoint = next_cat_location - 2
@@ -64,7 +64,7 @@ module Til
 
       next_bound = @initial_content.index('###', current_search_index + 1)
 
-      new_line = "- [#{item_title}](#{category}/#{filename})"
+      new_line = "- [#{item_title}](#{category}/#{CGI.escape(filename)})"
 
       if next_bound
         new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
