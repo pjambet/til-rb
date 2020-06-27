@@ -54,7 +54,7 @@ You might want to add those to either your `.bashrc` or `.zshrc` but please be c
 as the token is private and *must not* be shared publicly.
 
 Note: An earlier version of this gem used different names, `GH_TOKEN` & `GH_REPO`, it still works, but is not the
-recommended approach anymore, see #2.
+recommended approach anymore, see [#2](https://github.com/pjambet/til-rb/issues/2).
 
 ### Step 4:
 
