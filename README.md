@@ -10,6 +10,14 @@ See it in action below:
 
 ![til in action](til.gif)
 
+## Internals
+
+I wrote [a blog post](https://blog.pjam.me/posts/til-cli/) about the interesting parts of the til internals, specifically: 
+
+- Using unix pipes to feed data to `fzf` and read its output
+- Using an external editor
+- Creating a commit with the GitHub API
+
 ## Installation
 
 ### Step 1: Install the gem
@@ -64,6 +72,7 @@ Run `til` from the command line
 
 - An `init` command that will create a repo for you
 - A `configure` command that will store the token and the repo name in a file in `~/.config/til/config` or `~/.til`
+- Other storage destinations, looks like Gitlab has an API that could be used to replicate the logic we use for GH
 
 ## Known issues
 
