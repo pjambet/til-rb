@@ -2,11 +2,19 @@ require 'test_helper'
 require 'timecop'
 
 describe Til::Core do
+  # These tests exercise the run flow around fzf rather than fzf itself, so the
+  # dependency check is satisfied without requiring the binary on the machine.
+  # The dedicated 'exits if fzf is not available' test below leaves it real.
+  def stub_fzf_available
+    Til::CategoryPicker.any_instance.stubs(:ensure_available!)
+  end
+
   it 'has a run method' do
     github_client_mock = Minitest::Mock.new
     github_client_mock.expect :contents, [], ['pjambet/til'], path: ''
 
     Process.stubs(:spawn).returns(12)
+    stub_fzf_available
 
     Til::Core.new(
       process: Process,
@@ -17,6 +25,7 @@ describe Til::Core do
   end
 
   it 'exits if TIL_RB_GITHUB_TOKEN is nil or empty' do
+    stub_fzf_available
     error = assert_raises RuntimeError do
       Til::Core.new(env: {}).run
     end
@@ -26,8 +35,9 @@ describe Til::Core do
 
   it 'logs a warning if the deprecated GH_TOKEN is used' do
     Process.stubs(:spawn).returns(12)
+    stub_fzf_available
     github_client_mock = mock
-    github_client_mock.expects(:contents).with('a/b', { path: '' }).returns([]).once
+    github_client_mock.expects(:contents).with('a/b', path: '').returns([]).once
     stderr = StringIO.new
 
     Til::Core.new(
@@ -42,6 +52,7 @@ describe Til::Core do
   end
 
   it 'exits if TIL_RB_GITHUB_REPO is nil or empty' do
+    stub_fzf_available
     error = assert_raises RuntimeError do
       Til::Core.new(env: { 'TIL_RB_GITHUB_TOKEN' => 'abc' }).run
     end
@@ -50,8 +61,9 @@ describe Til::Core do
 
   it 'logs a warning if the deprecated GH_REPO is used' do
     Process.stubs(:spawn).returns(12)
+    stub_fzf_available
     github_client_mock = mock
-    github_client_mock.expects(:contents).with('a/b', { path: '' }).returns([]).once
+    github_client_mock.expects(:contents).with('a/b', path: '').returns([]).once
     stderr = StringIO.new
 
     Til::Core.new(

@@ -1,85 +1,105 @@
+require 'cgi/escape'
+
 module Til
+  # Inserts a TIL link into the README while keeping its two coupled regions in
+  # sync. The document has a fixed layout that this class edits by character
+  # offset:
+  #
+  #   # TIL
+  #   ---                      <- first delimiter
+  #   ### Categories           <- sorted bullet index of every category
+  #   * [Git](#git)
+  #   ---                      <- second delimiter, closes the index
+  #   ### Git                  <- one section per category, holding its links
+  #   - [a](git/...)
+  #
+  # Adding to an existing category only touches that section; adding a new
+  # category also splices a bullet into the index and a section into the body,
+  # both at the alphabetically correct spot.
   class ReadmeUpdater
 
-    def initialize(initial_content)
-      @initial_content = initial_content
+    CATEGORIES_HEADER = '### Categories'
+    SECTION_MARKER = '###'
+    DELIMITER = '---'
+
+    Category = Struct.new(:link, :title, :slug)
+
+    def initialize(content)
+      @content = content
     end
 
-    def add_item_for_existing_category(category, item_title, filename)
-      beginning = @initial_content.index('### Categories') + '### Categories'.length
-      eend = @initial_content.index('---', @initial_content.index('---') + 1) - 1
+    def add_item_for_existing_category(slug, item_title, filename)
+      category = categories.find { |c| c.slug == slug }
+      section_start = @content.index("#{SECTION_MARKER} #{category.title}")
+      next_section_start = @content.index(SECTION_MARKER, section_start + 1)
+      new_line = link_line(slug, item_title, filename)
 
-      # [["[Git](#git)", "Git", "git"], ["[Qux](#qux)", "Qux", "qux"]]
-      categories = @initial_content[beginning..eend].scan(/(\[(\w+)\]\(#(\w+)\))/)
-
-      existing_cat = categories.find { |c| c[2] == category }
-
-      loc_in_page = @initial_content.index("### #{existing_cat[1]}")
-      next_cat_location = @initial_content.index('###', loc_in_page + 1)
-
-      new_line = "- [#{item_title}](#{category}/#{CGI.escape(filename)})"
-      new_readme_content = ''
-      if next_cat_location
-        breakpoint = next_cat_location - 2
-        new_readme_content = @initial_content[0..breakpoint] + new_line + @initial_content[breakpoint..]
+      if next_section_start
+        cut = next_section_start - 2
+        @content[0..cut] + new_line + @content[cut..]
       else
-        new_readme_content = @initial_content + new_line + "\n"
+        @content + new_line + "\n"
       end
-      new_readme_content
     end
 
-    def add_item_for_new_category(category, item_title, filename)
-      # TODO: We'll need some form of validation on the category name
-      beginning = @initial_content.index('### Categories') + '### Categories'.length
-      first_dashdashdash = @initial_content.index('---')
-      eend = @initial_content.index('---', first_dashdashdash + 1) - 1
+    def add_item_for_new_category(slug, item_title, filename)
+      ordered = categories
+      position = ordered.bsearch_index { |c| c.slug >= slug } || ordered.length
+      ordered.insert(position, build_category(slug))
 
-      # [["[Git](#git)", "Git", "git"], ["[Qux](#qux)", "Qux", "qux"]]
-      categories = @initial_content[beginning..eend].scan(/(\[(\w+)\]\(#(\w+)\))/)
+      head = @content[0..(first_delimiter + DELIMITER.length - 1)] + "\n\n#{render_index(ordered)}\n"
+      new_section = "\n#{SECTION_MARKER} #{slug.capitalize}\n\n#{link_line(slug, item_title, filename)}\n"
+      next_section_start = section_start_at(position)
 
-      insert_at = categories.bsearch_index do |category_triplet|
-        category_triplet[2] >= category
-      end
-
-      if insert_at.nil?
-        # It's the last category
-        insert_at = categories.length
-      end
-
-      categories.insert(insert_at, ["[#{category.capitalize}](\##{category})", category.capitalize, category])
-
-      new_categories_formatted = categories.map do |category|
-        "* #{category[0]}"
-      end.join("\n")
-
-      new_categories_formatted.prepend("### Categories\n\n")
-
-      category_sections_found = 0
-      current_search_index = eend + 1 + 3
-
-      while category_sections_found < insert_at
-        current_search_index = @initial_content.index('###', current_search_index + 1)
-        category_sections_found += 1
-      end
-
-      next_bound = @initial_content.index('###', current_search_index + 1)
-
-      new_line = "- [#{item_title}](#{category}/#{CGI.escape(filename)})"
-
-      if next_bound
-        new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
-                             + "\n\n#{new_categories_formatted}\n" \
-                             + @initial_content[eend..(next_bound - 2)] \
-                             + "\n### #{category.capitalize}\n\n#{new_line}\n\n" \
-                             + @initial_content[next_bound..]
+      if next_section_start
+        head + @content[index_region_end..(next_section_start - 2)] + new_section + "\n" +
+          @content[next_section_start..]
       else
-        new_readme_content = @initial_content[0..(first_dashdashdash + 2)] \
-                             + "\n\n#{new_categories_formatted}\n" \
-                             + @initial_content[eend..] \
-                             + "\n### #{category.capitalize}\n\n#{new_line}\n"
+        head + @content[index_region_end..] + new_section
       end
-
-      new_readme_content
     end
+
+    private
+
+    # The sorted bullet list that lives under "### Categories".
+    def render_index(categories)
+      "#{CATEGORIES_HEADER}\n\n" + categories.map { |c| "* #{c.link}" }.join("\n")
+    end
+
+    def categories
+      region = @content[categories_region_start..index_region_end]
+      region.scan(/(\[(\w+)\]\(#(\w+)\))/).map { |match| Category.new(*match) }
+    end
+
+    def build_category(slug)
+      Category.new("[#{slug.capitalize}](##{slug})", slug.capitalize, slug)
+    end
+
+    def link_line(slug, title, filename)
+      "- [#{title}](#{slug}/#{CGI.escape(filename)})"
+    end
+
+    # Walks past the index to the body section that should follow the newly
+    # inserted one, i.e. the section at +position+ in document order, or nil
+    # when the new category sorts last.
+    def section_start_at(position)
+      cursor = index_region_end + 1 + DELIMITER.length
+      position.times { cursor = @content.index(SECTION_MARKER, cursor + 1) }
+      @content.index(SECTION_MARKER, cursor + 1)
+    end
+
+    def categories_region_start
+      @content.index(CATEGORIES_HEADER) + CATEGORIES_HEADER.length
+    end
+
+    def first_delimiter
+      @content.index(DELIMITER)
+    end
+
+    # Last character before the second delimiter, which closes the index.
+    def index_region_end
+      @content.index(DELIMITER, first_delimiter + 1) - 1
+    end
+
   end
 end
