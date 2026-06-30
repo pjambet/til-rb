@@ -13,6 +13,10 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/pjambet/til-rb/'
   s.license     = 'MIT'
   s.add_runtime_dependency 'octokit', '~> 4.0'
-  s.add_development_dependency 'mocha', '~> 1.11.2'
-  s.add_development_dependency 'timecop', '~> 0.9.1'
+  # base64 and readline left Ruby's default gems (3.4 / 4.0); octokit and the
+  # new-category prompt depend on them, so they must be declared explicitly.
+  s.add_runtime_dependency 'base64', '~> 0.2'
+  s.add_runtime_dependency 'readline', '~> 0.0.4'
+  s.add_development_dependency 'mocha', '>= 1.11', '< 3'
+  s.add_development_dependency 'timecop', '~> 0.9'
 end

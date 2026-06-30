@@ -4,7 +4,7 @@ require 'timecop'
 describe Til::Core do
   it 'has a run method' do
     github_client_mock = Minitest::Mock.new
-    github_client_mock.expect :contents, [], ['pjambet/til', { path: '' }]
+    github_client_mock.expect :contents, [], ['pjambet/til'], path: ''
 
     Process.stubs(:spawn).returns(12)
 
@@ -68,7 +68,7 @@ describe Til::Core do
   it 'exits if fzf is not available' do
     error = assert_raises RuntimeError do
       kernel_mock = Minitest::Mock.new
-      kernel_mock.expect :system, false, ['which fzf', { out: '/dev/null', err: '/dev/null' }]
+      kernel_mock.expect :system, false, ['which fzf'], out: '/dev/null', err: '/dev/null'
       Til::Core.new(kernel: kernel_mock, env: { 'TIL_RB_GITHUB_TOKEN' => 'abc' }).run
     end
     assert_match "fzf is required, you can install it on macOS with 'brew install fzf'", error.message

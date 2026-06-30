@@ -2,23 +2,33 @@ PATH
   remote: .
   specs:
     til-rb (0.0.8)
+      base64 (~> 0.2)
       octokit (~> 4.0)
+      readline (~> 0.0.4)
 
 GEM
   remote: https://rubygems.org/
   specs:
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    base64 (0.3.0)
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
-    minitest (5.14.1)
-    mocha (1.11.2)
+    io-console (0.8.2)
+    minitest (5.27.0)
+    mocha (2.8.2)
+      ruby2_keywords (>= 0.0.5)
     multipart-post (2.1.1)
     octokit (4.18.0)
       faraday (>= 0.9)
       sawyer (~> 0.8.0, >= 0.5.3)
     public_suffix (4.0.6)
-    rake (12.3.3)
+    rake (13.4.2)
+    readline (0.0.4)
+      reline
+    reline (0.6.3)
+      io-console (~> 0.5)
+    ruby2_keywords (0.0.5)
     sawyer (0.8.2)
       addressable (>= 2.3.5)
       faraday (> 0.8, < 2.0)
@@ -29,10 +39,10 @@ PLATFORMS
 
 DEPENDENCIES
   minitest (~> 5.0)
-  mocha (~> 1.11.2)
-  rake (~> 12.0)
+  mocha (>= 1.11, < 3)
+  rake (>= 13.0)
   til-rb!
-  timecop (~> 0.9.1)
+  timecop (~> 0.9)
 
 BUNDLED WITH
-   2.1.4
+  4.0.10
